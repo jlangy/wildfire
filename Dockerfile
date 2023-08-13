@@ -1,16 +1,16 @@
-FROM node:18-alpine AS dependencies
+FROM node:16-alpine AS dependencies
 ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-FROM node:18-alpine AS builder
+FROM node:16-alpine AS builder
 ENV NODE_ENV=production
 WORKDIR /app
 COPY . .
 RUN npm ci --frozen-lockfile --omit=dev && NODE_ENV=production npm run build
 
-FROM node:18-alpine AS production
+FROM node:16-alpine AS production
 WORKDIR /app
 ENV HOST=0.0.0.0
 ENV PORT=3000
