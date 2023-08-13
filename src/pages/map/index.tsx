@@ -1,7 +1,4 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from 'styles/Home.module.css'
 import Map from 'components/Map'
 import FireList from 'components/FireList'
 import Alert from 'components/Alert'
@@ -9,19 +6,15 @@ import Form from 'components/Form'
 import { Container, Grid, Paper, Backdrop, CircularProgress, Divider, Stack } from '@mui/material'
 import { fetchAllFires } from 'utils/api';
 import { useState, useEffect } from 'react';
-import type { GeoJSON } from 'react-leaflet'
 import { IFireArgs } from 'utils/types'
-import { useSession, signIn, signOut, getSession, SessionContextValue, GetSessionParams } from "next-auth/react"
-import {GetServerSideProps, Redirect} from 'next';
-import {Session} from 'next-auth'
+import { getSession, GetSessionParams } from "next-auth/react"
 
-const inter = Inter({ subsets: ['latin'] })
 
 const filterResultValues = (results: GeoJSON.FeatureCollection, key: string) => {
     return [...Array.from(new Set(results.features.map(feat => feat.properties?.[key])))].filter(val => val)
 }
 
-export default function Home() {
+export default function MapPage() {
     const [fireGeoJSON, setFireGeoJSON] = useState<null | GeoJSON.FeatureCollection>(null)
     const [fireStatuses, setFireStatuses] = useState<string[]>([]);
     const [fireCauses, setFireCauses] = useState<string[]>([]);
@@ -34,7 +27,8 @@ export default function Home() {
     const [apiError, setApiError] = useState(false);
 
     const fetchFires = (args?: IFireArgs) => {
-        setLoading(true)
+        setLoading(true);
+        setApiError(false);
         fetchAllFires(args).then(results => {
             setFireGeoJSON(results);
             setFiresInfo(results.features.map(feature => ({
@@ -53,19 +47,18 @@ export default function Home() {
         }).then(() => {
             setLoading(false)   
         })
-        .catch(() => {
+        .catch((err) => {
             setLoading(false);
             setApiError(true);
         })
     }
 
     const handleFeatureClick = (id: number) => {
-        console.log(id)
         setActiveFireId(id)
     }
 
     useEffect(() => {
-        fetchFires({ setOptions: true, fireStatus: 'fire of note' })
+        fetchFires({ setOptions: true })
     }, [])
 
     return (
