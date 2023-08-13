@@ -30,7 +30,7 @@ export default function FireList({ fires, activeFireId, setActiveFireId }: IProp
                 <nav aria-label="main mailbox folders">
                     <List sx={{ width: '100%' }}>
                         {fires.map(fire => (
-                            <div id={String(fire.id)}>
+                            <div id={String(fire.id)} key={fire.id}>
                                 <ListItem disablePadding key={fire.id} onClick={() => setActiveFireId(fire.id)} sx={{cursor: 'pointer'}}>
                                     <Typography variant="h6" sx={{textTransform: 'capitalize'}}> {fire.name?.toLowerCase() || 'Unnamed Incident'}</Typography>
                                 </ListItem>

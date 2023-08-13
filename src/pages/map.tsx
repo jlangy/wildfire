@@ -81,7 +81,7 @@ export default function Home() {
                 />
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
                     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                    crossOrigin="" />
+                    crossOrigin="" async />
             </Head>
             <main>
                 <Alert open={apiError} handleClose={() => setApiError(false)}></Alert>
