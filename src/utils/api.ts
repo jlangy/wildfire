@@ -28,7 +28,6 @@ export const generateFireUrl = (args?: IFireArgs, asCSV: boolean = false) => {
     const rawParams = filter ? { ...defaultParams, ...outputformat, cql_filter: filter } : { ...defaultParams, ...outputformat };
     const urlParams = new URLSearchParams(rawParams)
     
-    console.log('as csv', asCSV, `https://openmaps.gov.bc.ca/geo/pub/ows?${urlParams}`)
     return `https://openmaps.gov.bc.ca/geo/pub/ows?${urlParams}`
 }
 

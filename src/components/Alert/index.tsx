@@ -16,6 +16,7 @@ export default function AlertMessage({ open, handleClose }: IProps) {
         <Box sx={{ width: '25%', position: 'absolute', bottom: '2rem', zIndex: 1000, marginX: 'auto', left: 0, right: 0 }}>
             <Fade in={open}>
                 <Alert
+                    data-testid='error-banner'
                     severity='error'
                     action={
                         <IconButton

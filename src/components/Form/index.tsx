@@ -61,7 +61,7 @@ export default function Form({ fireCauses, fireStatuses, geographicDescriptions,
             />
             <Autocomplete
                 disablePortal
-                id="combo-box-demo"
+                id="fire-geographic-description-select"
                 options={geographicDescriptions}
                 freeSolo
                 value={geographicDescription}
@@ -75,7 +75,7 @@ export default function Form({ fireCauses, fireStatuses, geographicDescriptions,
             />
             <Stack direction='row' justifyContent='end' spacing={2}>
                 <Button color='warning' variant='contained'>Clear Filters</Button>
-                <Button color='primary' variant='contained' onClick={() => refetchData()}>Apply</Button>
+                <Button data-testid="apply-filter-btn" color='primary' variant='contained' onClick={() => refetchData()}>Apply</Button>
             </Stack>
             <Button color='primary' variant='contained' href={generateFireUrl({
                 fireCause: fireCause || undefined,
