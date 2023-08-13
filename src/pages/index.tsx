@@ -12,7 +12,7 @@ export default function Home() {
             {session ? (
                 <Button href='/map' variant='contained' size='large'>Continue to Map</Button>  
             ) : (
-                <Button variant='contained' size='large' onClick={() => signIn(undefined, {callbackUrl: '/map'})}>Login</Button>
+                <Button variant='contained' size='large' onClick={() => signIn(undefined, {callbackUrl: `${window.location.origin}/map`})}>Login</Button>
             )}
         </Container>
     )
