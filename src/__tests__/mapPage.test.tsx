@@ -5,9 +5,10 @@ import MapPage from '../pages/map'
 const allFeaturesURL = "https://openmaps.gov.bc.ca/geo/pub/ows?service=WFS&version=2.0.0&request=GetFeature&srsName=EPSG%3A4326&typeName=pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP&outputFormat=application%2Fjson"
 
 describe('Map Page', () => {
-    it.skip('Attempts to all data when initially loaded and displays an error message if failed', async () => {
+    it.skip('Attempts to fetch all data when initially loaded and displays an error message if failed', async () => {
         // Mock a rejection
         global.fetch = vi.fn(() => Promise.reject());
+
         const container = render(<MapPage />)
         expect(global.fetch).toHaveBeenCalledWith(allFeaturesURL)
 
@@ -54,7 +55,7 @@ describe('Map Page', () => {
             expect(errorBanner.style.opacity).toBe("1")
         })
 
-        // Respond with success
+        // Respond with success next request
         global.fetch = vi.fn(() => Promise.resolve({
             json: () => Promise.resolve({
                 features: [

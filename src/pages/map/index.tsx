@@ -48,7 +48,6 @@ export default function MapPage() {
             setLoading(false)   
         })
         .catch((err) => {
-            console.log('horrible!', err)
             setLoading(false);
             setApiError(true);
         })
