@@ -7,9 +7,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import styles from './navigation.module.css'
 
 export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (
@@ -36,8 +34,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
 
     // If the user is already logged in, redirect.
-    // Note: Make sure not to redirect to the same page
-    // To avoid an infinite loop!
     if (session) {
         return { redirect: { destination: "/" } };
     }

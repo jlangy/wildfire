@@ -11,13 +11,13 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import {Link as MUILink} from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import styles from './navigation.module.css'
 import { useSession, signIn, signOut } from "next-auth/react"
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import Head from 'next/head'
 import Link from 'next/link';
+import {navHeight} from 'styles/constants'
 
 const pages = ['map'];
 
@@ -26,7 +26,6 @@ function ResponsiveAppBar() {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const { data: session } = useSession();
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElNav(event.currentTarget);
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElUser(event.currentTarget);
     const handleCloseNavMenu = () => setAnchorElNav(null);
     const handleCloseUserMenu = () => setAnchorElUser(null);
@@ -40,7 +39,7 @@ function ResponsiveAppBar() {
     }
 
     return (
-        <AppBar position="static" elevation={4} className={styles.Navigation} sx={{ position: 'relative', zIndex: 501, height: '70px', margin: 0 }}>
+        <AppBar position="static" elevation={4} className={styles.Navigation} sx={{ position: 'relative', zIndex: 501, height: navHeight, margin: 0 }}>
             <Head>
                 <title>WildFire</title>
                 <meta name="description" content="Wildfire BC Tracker" />

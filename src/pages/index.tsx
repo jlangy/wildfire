@@ -11,7 +11,7 @@ export default function Home() {
                 <Typography sx={{ py: 4 }}>Welcome to Wildfire. This application is made to help display data about wildfires in the province of B.C by their status, location, and cause.
                 </Typography>
                 {session.status === 'authenticated' ? (
-                    <Button href='/map' component={Link} variant='contained' size='large'>Continue to Map</Button>
+                    <Button href='/map' component={Link} variant='contained' size='large'>View Fires</Button>
                 ) : (
                     <Button
                         variant='contained'

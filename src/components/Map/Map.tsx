@@ -53,7 +53,7 @@ export default function Home({ fireGeoJSON, onFeatureClick, activeFireId }: IPro
     }, [activeFireId])
 
     return (
-        <MapContainer className={styles.map} center={[50, -123]} zoom={6} scrollWheelZoom={true} ref={mapRef}>
+        <MapContainer className={styles.map} center={[54, -122]} zoom={6} scrollWheelZoom={true} ref={mapRef}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

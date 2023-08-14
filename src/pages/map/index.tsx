@@ -11,6 +11,7 @@ import { getSession, GetSessionParams } from "next-auth/react"
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { IFireDataShort } from 'utils/types'
+import { navHeight } from 'styles/constants'
 
 const filterResultValues = (results: GeoJSON.FeatureCollection, key: string) => {
     return [...Array.from(new Set(results.features.map(feat => feat.properties?.[key])))].filter(val => val)
@@ -85,7 +86,7 @@ export default function MapPage() {
                     crossOrigin="" async />
             </Head>
             <Alert open={apiError} handleClose={() => setApiError(false)}></Alert>
-            <Grid container sx={{ height: 'calc(100vh - 70px)' }} >
+            <Grid container sx={{ height: `calc(100vh - ${navHeight})` }} >
                 <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                     open={loading}
@@ -114,6 +115,7 @@ export default function MapPage() {
                         </Stack>
                     </Paper>
                 </Grid>
+                {/* Include map on medium+  devices */}
                 {smBreakUp && (
                     <Grid item xs={12} md={9} sx={{ height: '100%' }}>
                         <Map
