@@ -3,12 +3,14 @@ import Map from 'components/Map'
 import FireList from 'components/FireList'
 import Alert from 'components/Alert'
 import Form from 'components/Form'
-import { Container, Grid, Paper, Backdrop, CircularProgress, Divider, Stack } from '@mui/material'
+import { Grid, Paper, Backdrop, CircularProgress, Divider, Stack, Typography } from '@mui/material'
 import { fetchAllFires } from 'utils/api';
 import { useState, useEffect } from 'react';
 import { IFireArgs } from 'utils/types'
 import { getSession, GetSessionParams } from "next-auth/react"
-
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { IFireDataShort } from 'utils/types'
 
 const filterResultValues = (results: GeoJSON.FeatureCollection, key: string) => {
     return [...Array.from(new Set(results.features.map(feat => feat.properties?.[key])))].filter(val => val)
@@ -20,15 +22,19 @@ export default function MapPage() {
     const [fireCauses, setFireCauses] = useState<string[]>([]);
     const [geographicDescriptions, setGeographicDescriptions] = useState<string[]>([]);
 
-    const [firesInfo, setFiresInfo] = useState<{cause: string, name: string, status: string, url: string, id: number, location: string}[]>([]);
+    const [firesInfo, setFiresInfo] = useState<IFireDataShort[]>([]);
     const [activeFireId, setActiveFireId] = useState<number>();
-    
-    const [loading, setLoading] = useState(false);
+
+    const [loading, setLoading] = useState(true);
     const [apiError, setApiError] = useState(false);
+
+    const theme = useTheme();
+    const smBreakUp = useMediaQuery(theme.breakpoints.up('md'));
 
     const fetchFires = (args?: IFireArgs) => {
         setLoading(true);
         setApiError(false);
+        setActiveFireId(undefined);
         fetchAllFires(args).then(results => {
             setFireGeoJSON(results);
             setFiresInfo(results.features.map(feature => ({
@@ -37,7 +43,9 @@ export default function MapPage() {
                 name: feature.properties?.INCIDENT_NAME as string,
                 url: feature.properties?.FIRE_URL as string,
                 id: feature.properties?.FIRE_ID as number,
-                location: feature.properties?.GEOGRAPHIC_DESCRIPTION as string
+                location: feature.properties?.GEOGRAPHIC_DESCRIPTION as string,
+                fireStart: feature.properties?.IGNITION_DATE as string,
+                fireEnd: feature.properties?.FIRE_OUT_DATE as string,
             })))
             if (args?.setOptions) {
                 setFireStatuses(filterResultValues(results, 'FIRE_STATUS'))
@@ -45,12 +53,12 @@ export default function MapPage() {
                 setFireCauses(filterResultValues(results, 'FIRE_CAUSE'))
             }
         }).then(() => {
-            setLoading(false)   
+            setLoading(false)
         })
-        .catch((err) => {
-            setLoading(false);
-            setApiError(true);
-        })
+            .catch((err) => {
+                setLoading(false);
+                setApiError(true);
+            })
     }
 
     const handleFeatureClick = (id: number) => {
@@ -62,9 +70,9 @@ export default function MapPage() {
     }, [])
 
     return (
-        <>
+        <main>
             <Head>
-                <title>Wildfire</title>
+                <title>WildFire</title>
                 <meta name="description" content="Wildfire BC Tracker" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
@@ -76,44 +84,47 @@ export default function MapPage() {
                     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
                     crossOrigin="" async />
             </Head>
-            <main>
-                <Alert open={apiError} handleClose={() => setApiError(false)}></Alert>
-                <Grid container sx={{height: 'calc(100vh - 70px)'}} >
-                    <Backdrop
-                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                        open={loading}
-                        transitionDuration={500}
-                    >
+            <Alert open={apiError} handleClose={() => setApiError(false)}></Alert>
+            <Grid container sx={{ height: 'calc(100vh - 70px)' }} >
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={loading}
+                    transitionDuration={500}
+                >
+                    <Stack alignItems={'center'} spacing={2}>
                         <CircularProgress color="inherit" />
-                    </Backdrop>
-                    <Grid item xs={12} md={3} sx={{height: '100%'}}>
-                        <Paper sx={{ height: "100%", zIndex: 500, position: 'relative' }} elevation={4} >
-                            <Stack sx={{ height: "100%", marginX: 2 }}>
-                                <Form
-                                    fireStatuses={fireStatuses}
-                                    fireCauses={fireCauses}
-                                    geographicDescriptions={geographicDescriptions}
-                                    fetchFires={fetchFires}
-                                />
-                                <Divider sx={{my: 2}}/>
-                                <FireList 
-                                    fires={firesInfo}
-                                    activeFireId={activeFireId}
-                                    setActiveFireId={setActiveFireId}
-                                />
-                            </Stack>   
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={9} sx={{height: '100%'}}>
-                        <Map 
+                        <Typography>Fetching Fire Data...</Typography>
+                    </Stack>
+                </Backdrop>
+                <Grid item xs={12} md={3} sx={{ height: '100%' }}>
+                    <Paper sx={{ height: "100%", zIndex: 500, position: 'relative' }} elevation={4} >
+                        <Stack sx={{ height: "100%", marginX: 2 }}>
+                            <Form
+                                fireStatuses={fireStatuses}
+                                fireCauses={fireCauses}
+                                geographicDescriptions={geographicDescriptions}
+                                fetchFires={fetchFires}
+                            />
+                            <Divider sx={{ my: 2 }} />
+                            <FireList
+                                fires={firesInfo}
+                                activeFireId={activeFireId}
+                                setActiveFireId={setActiveFireId}
+                            />
+                        </Stack>
+                    </Paper>
+                </Grid>
+                {smBreakUp && (
+                    <Grid item xs={12} md={9} sx={{ height: '100%' }}>
+                        <Map
                             fireGeoJSON={fireGeoJSON}
                             onFeatureClick={handleFeatureClick}
                             activeFireId={activeFireId}
                         />
                     </Grid>
-                </Grid>
-            </main>
-        </>
+                )}
+            </Grid>
+        </main>
     )
 }
 
@@ -129,6 +140,6 @@ export const getServerSideProps = async (context: GetSessionParams) => {
     }
 
     return {
-        props: {session}
+        props: { session }
     }
 }

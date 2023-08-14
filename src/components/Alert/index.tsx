@@ -13,7 +13,7 @@ interface IProps {
 
 export default function AlertMessage({ open, handleClose }: IProps) {
     return (
-        <Box sx={{ width: '25%', position: 'absolute', bottom: '2rem', zIndex: 1000, marginX: 'auto', left: 0, right: 0 }}>
+        <Box sx={{ width: '25%', position: 'absolute', bottom: '2rem', zIndex: 500, marginX: 'auto', left: 0, right: 0, visibility: open ? 'visible': 'hidden' }}>
             <Fade in={open}>
                 <Alert
                     data-testid='error-banner'

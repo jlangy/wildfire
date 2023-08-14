@@ -3,10 +3,12 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { IFireArgs } from 'utils/types';
 import { useState } from 'react';
 import { generateFireUrl } from 'utils/api'
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface IProps {
     fireCauses: string[];
@@ -19,69 +21,94 @@ export default function Form({ fireCauses, fireStatuses, geographicDescriptions,
     const [fireStatus, setFireStatus] = useState<string | null>(null);
     const [fireCause, setFireCause] = useState<string | null>(null);
     const [geographicDescription, setGeographicDescription] = useState<string | null>(null);
+    const [filtersChanged, setFiltersChanged] = useState(false);
 
     const refetchData = () => {
         fetchFires({
             fireCause: fireCause || undefined,
             fireStatus: fireStatus || undefined,
             geographicDescription: geographicDescription || undefined,
-        })
+        });
+        setFiltersChanged(false);
     }
 
     return (
         <Stack spacing={2} sx={{ paddingTop: 2 }}>
-            <Typography variant='h4'>Filter Fires</Typography>
+            <Stack direction='row' justifyContent={'space-between'} alignItems='center'>
+                <Typography variant='h4'>Filter Fires
+                </Typography>
+                {filtersChanged && (
+                    <Chip
+                        label="Pending Changes"
+                        size='small'
+                        title='There are pending filter changes. Click the "Apply Filters" button below to refresh the data'
+                        icon={<RefreshIcon />}
+                    />
+                )}
+            </Stack>
             <Autocomplete
                 disablePortal
                 id="fire-status-select"
                 options={fireStatuses}
+                size="small"
                 freeSolo
                 value={fireStatus}
                 renderInput={(params) => <TextField {...params} label="Fire Status" />}
                 onChange={(_event: any, newValue: string | null) => {
+                    setFiltersChanged(true);
                     setFireStatus(newValue);
                 }}
                 onBlur={(event: any) => {
+                    setFiltersChanged(true);
                     setFireStatus(event.target.value);
                 }}
             />
             <Autocomplete
                 disablePortal
                 id="fire-cause-select"
+                size='small'
                 options={fireCauses}
                 freeSolo
                 value={fireCause}
                 renderInput={(params) => <TextField {...params} label="Fire Cause" />}
                 onChange={(_event: any, newValue: string | null) => {
+                    setFiltersChanged(true);
                     setFireCause(newValue);
                 }}
                 onBlur={(event: any) => {
+                    setFiltersChanged(true);
                     setFireCause(event.target.value);
                 }}
             />
             <Autocomplete
                 disablePortal
                 id="fire-geographic-description-select"
+                size='small'
                 options={geographicDescriptions}
                 freeSolo
                 value={geographicDescription}
                 onChange={(_event: any, newValue: string | null) => {
+                    setFiltersChanged(true);
                     setGeographicDescription(newValue);
                 }}
                 onBlur={(event: any) => {
+                    setFiltersChanged(true);
                     setGeographicDescription(event.target.value);
                 }}
                 renderInput={(params) => <TextField {...params} label="Geographic Description" />}
             />
-            <Stack direction='row' justifyContent='end' spacing={2}>
-                <Button color='warning' variant='contained'>Clear Filters</Button>
-                <Button data-testid="apply-filter-btn" color='primary' variant='contained' onClick={() => refetchData()}>Apply</Button>
-            </Stack>
+            <Button
+                data-testid="apply-filter-btn"
+                disabled={!filtersChanged}
+                color='success'
+                variant='contained'
+                onClick={() => refetchData()}
+            >Apply Filters</Button>
             <Button color='primary' variant='contained' href={generateFireUrl({
                 fireCause: fireCause || undefined,
                 fireStatus: fireStatus || undefined,
                 geographicDescription: geographicDescription || undefined,
-            }, true)}>Download CSV</Button>
+            }, true)}>Download as CSV</Button>
         </Stack >
     );
 }
