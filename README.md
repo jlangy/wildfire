@@ -1,6 +1,6 @@
 # WildFire
 
-This is a web application to view fire information.
+This is a web application to view fire information. You can visit the live site at [https://wildfire-nu.vercel.app](https://wildfire-nu.vercel.app).
 
 ## Getting Started
 
@@ -53,4 +53,6 @@ For the design of this applications, I chose to use the NextJS framework for Rea
 
 To meet the authentication requirements, I included an open access landing page, and an authentcation required page (the map). Since we were provided a public API to consume, AJAX requests are sent directly to the API and not proxied through the application's API. Authenticated api routes can be easily added to this server by including new files in the [api](./src/pages/api) folder and checking the provided session.
 
+For the UI, I chose to use the Material UI component library consistently for a clean look and feel, and to be able to easily theme the app with some BCGov styles if time permitted. I chose to use Leaflet for mapping since it is open and free. 
 
+For data flow, all data is fetched on initial map load. I decided not to use the downloaded GeoJSON from this initial request when filtering, even though that would have a faster feel. I chose this because the list of fires and their statuses could change at any time, so I wanted to ensure any newly applied filters were re-fetching up to date information.
