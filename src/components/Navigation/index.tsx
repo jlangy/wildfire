@@ -5,17 +5,21 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
+import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
+import {Link as MUILink} from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import styles from './navigation.module.css'
 import { useSession, signIn, signOut } from "next-auth/react"
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import Head from 'next/head'
+import Link from 'next/link';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['map'];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -35,103 +39,63 @@ function ResponsiveAppBar() {
         }
     }
 
-
     return (
         <AppBar position="static" elevation={4} className={styles.Navigation} sx={{ position: 'relative', zIndex: 501, height: '70px', margin: 0 }}>
+            <Head>
+                <title>WildFire</title>
+                <meta name="description" content="Wildfire BC Tracker" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
+                    <MenuItem
+                        component={Link}
                         href="/"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
                     >
-                        LOGO
-                    </Typography>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
+                        <LocalFireDepartmentIcon sx={{ color: 'orange', mr: 1 }} />
+                        <Typography
+                            noWrap
                             sx={{
-                                display: { xs: 'block', md: 'none', height: '10vh' },
+                                mr: 2,
+                                letterSpacing: '.3rem',
+                                fontFamily: 'cursive',
+                                fontSize: '1.5rem',
+                                color: 'orange',
+                                textDecoration: 'none',
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href="/"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                            WildFire
+                        </Typography>
+                    </MenuItem>
+
+
+
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                component={Link}
+                                sx={{ my: 2, pl: 2, color: 'white', display: 'block' }}
+                                href={page}
                             >
                                 {page}
                             </Button>
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
-                        </Tooltip>
+                    <Box sx={{ flexGrow: 1 }}>
+                        {session && (
+                            <Stack direction='row' alignItems={'center'} justifyContent='flex-end' onClick={handleOpenUserMenu} sx={{ cursor: 'pointer' }}>
+                                <Typography fontSize={16} sx={{ mr: 3 }} display={{ xs: 'none', sm: 'block' }}>{session.user?.email} </Typography>
+                                <Tooltip title="Open settings">
+                                    <IconButton sx={{ p: 0 }}>
+                                        <Avatar alt="User Photo" src={session.user?.image || ''} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Stack>
+                        )}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
@@ -148,7 +112,24 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {session && <p>signed in as {session.user?.email} </p>}
+                            <MenuItem
+                                href={'/'}
+                                component={Link}
+                                sx={{ textTransform: 'capitalize', minWidth: '8rem' }}
+                            >
+                                Home
+                            </MenuItem>
+                            {pages.map((page) => (
+                                    <MenuItem
+                                        key={page}
+                                        href={page}
+                                        component={Link}
+                                        sx={{ textTransform: 'capitalize', minWidth: '8rem' }}
+                                    >
+                                        {page}
+                                    </MenuItem>
+                            ))}
+                            <Divider />
                             <MenuItem onClick={() => handleAuth()}>
                                 <Typography textAlign="center">{session ? 'Logout' : 'Login'}</Typography>
                             </MenuItem>

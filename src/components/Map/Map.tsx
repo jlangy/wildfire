@@ -1,7 +1,7 @@
 import styles from './map.module.css'
-import { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, useMap, Marker, GeoJSON, WMSTileLayer, GeoJSONProps, Popup } from 'react-leaflet'
-import L, { LatLngExpression, LatLngTuple, Layer, layerGroup, Map, popup } from 'leaflet';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
+import { Layer, Map } from 'leaflet';
 
 interface IProps {
     fireGeoJSON: GeoJSON.FeatureCollection | null;
@@ -20,8 +20,10 @@ interface ILayerProperties {
 const formatProperties = (properties: ILayerProperties) => {
     return `
         <h4>${properties.GEOGRAPHIC_DESCRIPTION}</h4>
-        <p><strong>Status: </strong> ${properties.FIRE_STATUS}</p>
-        <p><strong>Cause: </strong> ${properties.FIRE_CAUSE}</p>
+        <ul class='popup-list'>
+            <li><strong>Status: </strong> ${properties.FIRE_STATUS}</li>
+            <li><strong>Cause: </strong> ${properties.FIRE_CAUSE}</li>
+        </ul>
     `
 }
 
@@ -42,12 +44,9 @@ export default function Home({ fireGeoJSON, onFeatureClick, activeFireId }: IPro
     }
 
     useEffect(() => {
-        const feature = (mapRef.current as Map)?.eachLayer((layer) => {
-            // @ts-ignore
-            // @ts-ignore
-            if (layer.feature?.properties.FIRE_ID === activeFireId) {
+        const feature = (mapRef.current as Map)?.eachLayer((layer: any) => {
+            if (layer.feature?.properties.FIRE_ID === activeFireId && layer.feature?.geometry) {
                 layer.openPopup()
-                // @ts-ignore
                 mapRef.current?.flyTo([layer.feature?.geometry.coordinates[1], layer.feature?.geometry.coordinates[0]], 8)
             }
         })

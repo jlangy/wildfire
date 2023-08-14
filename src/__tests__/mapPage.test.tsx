@@ -1,11 +1,12 @@
 import { vi, expect, describe, it } from 'vitest'
 import { render, waitFor, fireEvent } from '@testing-library/react'
 import MapPage from '../pages/map'
+import { act } from 'react-dom/test-utils'
 
 const allFeaturesURL = "https://openmaps.gov.bc.ca/geo/pub/ows?service=WFS&version=2.0.0&request=GetFeature&srsName=EPSG%3A4326&typeName=pub%3AWHSE_LAND_AND_NATURAL_RESOURCE.PROT_CURRENT_FIRE_PNTS_SP&outputFormat=application%2Fjson"
 
 describe('Map Page', () => {
-    it.skip('Attempts to fetch all data when initially loaded and displays an error message if failed', async () => {
+    it('Attempts to fetch all data when initially loaded and displays an error message if failed', async () => {
         // Mock a rejection
         global.fetch = vi.fn(() => Promise.reject());
 
@@ -18,7 +19,7 @@ describe('Map Page', () => {
         })
     })
 
-    it.skip('Attempts to fetch all data when initially loaded and displays the returned locations if successful', async () => {
+    it('Attempts to fetch all data when initially loaded and displays the returned locations if successful', async () => {
         // Mock a success
         global.fetch = vi.fn(() => Promise.resolve({
             json: () => Promise.resolve({
@@ -46,7 +47,7 @@ describe('Map Page', () => {
         })
     })
 
-    it.skip('Re-fetches data when new filters are applied', async () => {
+    it('Re-fetches data when new filters are applied', async () => {
         // Fail on initial load
         global.fetch = vi.fn(() => Promise.reject());
         const container = render(<MapPage />)
@@ -69,10 +70,16 @@ describe('Map Page', () => {
             })
         })) as any;
 
-        // Trigger a search
+        expect(global.fetch).toHaveBeenCalledTimes(0);
+
+        // Adjust and apply filters
+        const geographicDescriptionSelect = document.querySelector('#fire-geographic-description-select') as Element;
+        fireEvent.blur(geographicDescriptionSelect, {target: { value: 'something'}});
         const applyFilterButton = container.getByTestId('apply-filter-btn');
-        applyFilterButton.click();
+        fireEvent.click(applyFilterButton);
         
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+
         await waitFor(() => {
             expect(errorBanner.style.opacity).toBe("0")
         })
@@ -83,7 +90,7 @@ describe('Map Page', () => {
         })
     })
 
-    it('Does not over-trigger api calls on user interaction', async () => {
+    it('Does not over-trigger api calls on user interaction', async (done) => {
         global.fetch = vi.fn(() => Promise.reject());
         const container = render(<MapPage />)
 
@@ -92,18 +99,17 @@ describe('Map Page', () => {
 
         // Fire a change event on all form elements
         const geographicDescriptionSelect = document.querySelector('#fire-geographic-description-select') as Element;
-        const fireStatusSelect = document.querySelector('#fire-status-select') as Element;
-        const fireCauseSelect = document.querySelector('#fire-cause-select') as Element;
-        fireEvent.change(geographicDescriptionSelect, {target: { value: 'something'}});
-        fireEvent.change(fireStatusSelect, {target: { value: 'something'}});
-        fireEvent.change(fireCauseSelect, {target: { value: 'something'}});
+        fireEvent.blur(geographicDescriptionSelect, {target: { value: 'something'}});
 
         // No additional fetch requests made
         expect(global.fetch).toHaveBeenCalledOnce();
 
         // Submit with the apply button
         const applyFilterButton = container.getByTestId('apply-filter-btn');
-        applyFilterButton.click();
+
+        await act(async () => {
+            applyFilterButton.click();
+        })
 
         // An additional fetch request has been made.
         expect(global.fetch).toHaveBeenCalledTimes(2);
