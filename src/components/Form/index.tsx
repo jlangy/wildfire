@@ -41,12 +41,12 @@ export default function Form({ fireCauses, fireStatuses, geographicDescriptions,
                         <Chip
                             label="Filters Changed"
                             size='small'
-                            title='There are pending filter changes. Click the "Apply Filters" button below to refresh the data'
+                            title='There are pending filter changes. Click the Apply Filters button below to refresh the data'
                             icon={<RefreshIcon />}
                         />
                     )}
                 </Stack>
-                <Typography variant='subtitle1' sx={{ marginTop: 0, fontSize: '13px' }}>Fill in the fields below and click "APPLY FILTERS" to filter down fire results. Clear all fields to see all results from 2023.</Typography>
+                <Typography variant='subtitle1' sx={{ marginTop: 0, fontSize: '13px' }}>Fill in the fields below and click &quot; APPLY FILTERS &quot; to filter down fire results. Clear all fields to see all results from 2023.</Typography>
             </div>
             <Autocomplete
                 disablePortal

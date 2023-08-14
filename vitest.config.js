@@ -15,6 +15,7 @@ export default defineConfig({
     alias: {
       components: "./src/components",
       utils: "./src/utils",
+      styles: "./src/styles",
     },
   },
   dedupe: ["react", "react-dom"]
