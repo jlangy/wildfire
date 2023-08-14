@@ -17,10 +17,13 @@ To run the application, you will need an OAuth App with Github for authetication
     - Copy the contents of `.env.example` into a new file named `.env` (in the same directory).
     - Copy the **Client ID** from your new OAuth app and set it to `GITHUB_ID` in the `.env` file.
     - From your OAuth app, click on **Generate a new client secret**. Copy the new secret into the `GITHUB_SECRET` env variable in the `.env` file.
-    - Generate a JWT_SECRET, e.g by running `openssl rand -base64 32` in your terminal, and add it to the `.env` file. 
+    - Generate a 32-bit secret for the JWT_SECRET variable, e.g by running `openssl rand -base64 32` in your terminal, and add it to the `.env` file. 
 
-The webapp can now be run with docker by running:
+The webapp can now be run with docker by running (This initial build may take a few minutes):
 - `docker-compose up`
+- Visit localhost:3000
+
+_**Note:** If hitting a "Creating Network" error, it is likely due to a VPN connection. You can uncomment the `# network_mode: bridge` line in docker-compose.yaml to test locally without disabling the VPN._
 
 Alternatively, you can run in a hot-reloading environment by running:
 - `npm install`
